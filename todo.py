@@ -1,5 +1,21 @@
 # To-Do List (Day 3) - Step 1 
 
+import json, os
+FILE = "todo.json"
+
+def load_tasks():
+    global tasks
+    if os.path.exists(FILE):
+        with open(FILE, "r") as f:
+            tasks = json.load(f)
+    else:
+        tasks = []
+
+def save_tasks():
+    with open(FILE, "w") as f:
+        json.dump(tasks, f, indent=2)
+
+
 def menu():
     print("== TO-DO LIST ==")
     print("1) List Task")
@@ -132,7 +148,6 @@ def complete_task():
     else:
         print("Invalid number.\n")
 
-# (Optional) keep for later step, or leave uncalled
 def delete_task():
     if not tasks:
         print("Nothing to delete.\n")
@@ -175,5 +190,7 @@ def main():
             print("Not implemented yet.\n")
 
 if __name__ == "__main__":
+    load_tasks()
     main()
+
 
