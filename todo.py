@@ -1,5 +1,3 @@
-# To-Do List (Day 3) - Step 1 
-
 import json, os
 FILE = "todo.json"
 
@@ -33,8 +31,6 @@ def main():
             break
         else:
             print("Not implemented yet.\n")
-
-# TO-DO List Step 2 (list tasks)
 
 tasks = [] # we'll store dicts later; for now just strings is fine 
 
@@ -110,8 +106,6 @@ def main():
         else:
             print("Not implemented yet.\n")
 
-# To-Do List (Step 4) — mark tasks complete
-
 # Store each task as a dict so we can track completion
 tasks = []  # e.g. {"title": "Do homework", "done": False}
 
@@ -123,6 +117,29 @@ def list_tasks():
     for i, t in enumerate(tasks, start=1):
         status = "[x]" if t["done"] else "[ ]"
         print(f"{i}. {status} {t['title']}")
+    print()
+
+def list_tasks_filtered(status="all"):
+    for i, t in enumerate(tasks, start=1):
+        is_done = t.get("completed", False)
+        if status == "active" and is_done:
+            continue
+        if status == "completed" and not is_done:
+            continue
+        box = "[x]" if is_done else "[ ]"
+        print(f"{i}. {box} {t['title']}")
+    print()
+
+
+def list_tasks_filtered(status="all"):
+    for i, t in enumerate(tasks, start=1):
+        is_done = t.get("completed", False)
+        if status == "active" and is_done:
+            continue
+        if status == "completed" and not is_done:
+            continue
+        box = "[x]" if is_done else "[ ]"
+        print(f"{i}. {box} {t['title']}")
     print()
 
 def add_task():
@@ -137,16 +154,45 @@ def complete_task():
     if not tasks:
         print("Nothing to complete.\n")
         return
+
     list_tasks()
     raw = input("Complete which #? ").strip()
     if not raw.isdigit():
-        print("Enter a number.\n"); return
+        print("Enter a number.\n")
+        return
+
     idx = int(raw)
     if 1 <= idx <= len(tasks):
-        tasks[idx-1]["done"] = True
+        tasks[idx - 1]["completed"] = True   # <-- was "done"
         print(f"Completed: {tasks[idx-1]['title']}\n")
+        try:
+            save_tasks()  # if you have autosave helpers
+        except NameError:
+            pass
     else:
         print("Invalid number.\n")
+
+
+def toggle_task():
+    if not tasks:
+        print("Nothing to toggle.\n")
+        return
+    list_tasks()
+    raw = input("Toggle which #? ").strip()
+    if not raw.isdigit():
+        print("Enter a number.\n")
+        return
+    idx = int(raw)
+    if 1 <= idx <= len(tasks):
+        t = tasks[idx-1]
+        t["completed"] = not t.get("completed", False)
+        state = "complete" if t["completed"] else "active"
+        print(f"Toggled: {t['title']} → {state}\n")
+        save_tasks()  # so it sticks
+    else:
+        print("Invalid number.\n")
+
+
 
 def delete_task():
     if not tasks:
@@ -169,7 +215,10 @@ def menu():
     print("2) Add task")
     print("3) Complete task")
     print("4) Delete task")
-    print("5) Quit")
+    print("5) Toggle complete")
+    print("7) List active only")
+    print("8) List completed only")
+    print("9) Quit")
 
 def main():
     while True:
@@ -184,7 +233,12 @@ def main():
         elif choice == "4":
             delete_task()
         elif choice == "5":
-            print("Bye!")
+            toggle_task()
+        elif choice == "7":
+            list_tasks_filtered("active")
+        elif choice == "8":
+            list_tasks_filtered("completed")
+        elif choice == "9":
             break
         else:
             print("Not implemented yet.\n")
